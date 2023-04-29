@@ -1,23 +1,43 @@
-import sys
 import pygame
 
-class Setting():
-    #Класс для хранения всех настроек игры
+class Ship():
+    #класс для управления кораблем
+    def __init__(self,ai_game):
+        #инициализировать корабль и задать его первоначальную позицию
+        self.screen = ai_game.screen
+        self.setting = ai_game.settings
+        self.screen_rect = ai_game.screen.get_rect()
 
-    def __init__(self):
-        #инициализируем настройки игры
+        #загрузит изображение корабля и получить прямоугольник
+        self.image = pygame.image.load('images/ship.bmp')
+        self.rect = self.image.get_rect()
+        #каждый  новый корабль появляется у нижней границы экрана
+        self.rect.midbottom = self.screen_rect.midbottom
 
-        #параметры экрана
-        self.screen_width = 800
-        self.screen_height = 600
-        self.bg_color = (230,230,230)
 
-        #настройки корабля
-        self.ship_speed = 1.5
+        self.x = float(self.rect.x)
+        #self.y = float(self.rect.y)
+        #флаги перемещения
+        self.moving_right = False
+        self.moving_left = False
+        #self.moving_up = False
+        #self.moving_under = False
 
-        #параметр снаряда
-        self.bullet_speed = 1
-        self.bullet_width = 3
-        self.bullet_height = 15
-        self.bullet_color = (60,60,60)
-        self.bullets_allowed = 3
+    def update(self):
+        #обновляет позицию корабля с учетом флага
+        if self.moving_right and self.rect.right < self.screen_rect.right:
+            self.x += self.setting.ship_speed
+        if self.moving_left and self.rect.left > 0:
+            self.x -= self.setting.ship_speed
+        #if self.moving_up:
+            #self.y += self.setting.ship_speed
+        #if self.moving_under:
+            #self.y -= self.setting.ship_speed
+        
+        self.rect.x = self.x
+        #self.rect.y = self.y
+
+
+    def blitme(self):
+        #рисуем корабль в текущей позиции
+        self.screen.blit(self.image,self.rect)
