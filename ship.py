@@ -16,12 +16,12 @@ class Ship():
 
 
         self.x = float(self.rect.x)
-        self.y = float(self.rect.y)
+        #self.y = float(self.rect.y)
         #флаги перемещения
         self.moving_right = False
         self.moving_left = False
-        self.moving_up = False
-        self.moving_under = False
+        #self.moving_up = False
+        #self.moving_under = False
 
     def update(self):
         #обновляет позицию корабля с учетом флага
@@ -29,12 +29,13 @@ class Ship():
             self.x += self.setting.ship_speed
         if self.moving_left and self.rect.left > 0:
             self.x -= self.setting.ship_speed
-        if self.moving_up:
-            self.y += self.setting.ship_speed
-        if self.moving_under:
-            self.y -= self.setting.ship_speed
+        #if self.moving_up:
+            #self.y += self.setting.ship_speed
+        #if self.moving_under:
+            #self.y -= self.setting.ship_speed
         
         self.rect.x = self.x
+        #self.rect.y = self.y
 
 
     def blitme(self):
