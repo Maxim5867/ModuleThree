@@ -139,4 +139,3 @@ if __name__ == '__main__':
     #создаем экземпляр и запускаем игру
     aw = AlienInvasion()
     aw.run_game()
-
