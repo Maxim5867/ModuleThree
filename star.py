@@ -1,7 +1,7 @@
 import pygame
 from pygame.sprite import Sprite
 
-class Alien(Sprite):
+class Star(Sprite):
     #Класс, представляющий одного пришельца
 
     def __init__(self,ai_game):
@@ -10,7 +10,7 @@ class Alien(Sprite):
         self.screen = ai_game.screen
 
         #загружаем изображение пришельца и назначение атрибута rect
-        self.image = pygame.image.load('images/alien.png')
+        self.image = pygame.image.load('images/star.jpg')
         self.rect = self.image.get_rect()
 
         #каждый новый пришелец появляется в верхнем левом углу экрана
