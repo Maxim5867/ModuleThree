@@ -5,7 +5,7 @@ class Bullet(Sprite):
     #класс для управления снарядами, выпущенными кораблем
 
     def __init__(self,ai_game):
-        #слздать объект снарядов в текущем положении корабля
+        #слздать объект снарядов в текущем положении корабля6
         super().__init__()
         self.screen = ai_game.screen
         self.settings = ai_game.settings
