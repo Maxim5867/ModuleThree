@@ -4,8 +4,6 @@ from setting import Setting
 from ship import Ship
 from bullet import Bullet
 from alien import Alien
-from star import Star
-import random
 
 class AlienInvasion:
     #класс для управления русурсами и поведениями игр
@@ -32,10 +30,8 @@ class AlienInvasion:
         self.ship = Ship(self)
         self.bullets = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
-        self.stars = pygame.sprite.Group()
 
-        #self._create_fleet()
-        self._create_stars()
+        self._create_fleet()
 
     def run_game(self):
         #запуск одного цикла игры
@@ -43,63 +39,63 @@ class AlienInvasion:
             self._check_event()
             self.ship.update()
             self._update_bullets()
+            self._update_aliens()
+
             self._update_screen()
-    
-    #def _create_fleet(self1):
+
+    def _create_fleet(self):
         #создание флота пришельцев
 
         #создание пришельца и вычисление количества пришельцев в ряду
         #интервал между соседними пришельцами равен ширине пришельца
-        #alien = Alien(self)
-        #alien_width,alien_height = alien.rect.size
-        #available_space_x = self.settings.screen_width - (2*alien_width)
-        #number_aliens_x = available_space_x // (2*alien_width)
+        alien = Alien(self)
+        alien_width,alien_height = alien.rect.size
+        available_space_x = self.settings.screen_width - (2*alien_width)
+        number_aliens_x = available_space_x // (2*alien_width)
 
         #определим количество рядов, которые помещаются на экране
-        #ship_height = self.ship.rect.height
-        #available_space_y = (self.settings.screen_height - (3*alien_height)-ship_height)
-        #number_rows = available_space_y // (2*alien_height)
+        ship_height = self.ship.rect.height
+        available_space_y = (self.settings.screen_height - (3*alien_height)-ship_height)
+        number_rows = available_space_y // (2*alien_height)
 
         #создание флота пришельцев
-        #for row_number in range(number_rows):
+        for row_number in range(number_rows):
             # создание ряда пришельцев
-            #for alien_number in range(number_aliens_x):
+            for alien_number in range(number_aliens_x):
                 #создаем пришельца и размещаем его в ряду
-                #elf._create_alien(alien_number,row_number)
-    
-    def _create_stars(self):
-        star = Star(self)
-        star_width,star_height = star.rect.size
-        avai_space_x = self.settings.screen_width - (4*star_width)
-        number_star_x = avai_space_x // (4*star_width)
-
-        ship_height = self.ship.rect.height
-        avai_space_y = (self.settings.screen_height - (6*star_height)-ship_height)
-        number_row = avai_space_y // (6*star_height)
-        for row_number in range(number_row):
-            for alien_number in range(number_star_x):
-                #number_star_x = random.randint(0,100)
-                number_row = random.randint(-10,50)
-                self._create_star(alien_number,row_number)
-        
-        
-    
-    def _create_star(self,star_number,rows_number):
-        star = Star(self)
-        star_width,star_height = star.rect.size
-        star.x = star_width + 4*star_width*star_number
-        star.rect.x = star.x
-        star.rect.y = star.rect.height+6*star.rect.height*rows_number
-        self.aliens.add(star)
+                self._create_alien(alien_number,row_number)
             
 
-    #def _create_alien(self,alien_number,row_number):
-        #alien = Alien(self)
-        #alien_width,alien_height = alien.rect.size
-        #alien.x = alien_width + 2*alien_width*alien_number
-        #alien.rect.x = alien.x
-        #alien.rect.y = alien.rect.height+2*alien.rect.height*row_number
-        #self.aliens.add(alien)
+    def _create_alien(self,alien_number,row_number):
+        alien = Alien(self)
+        alien_width,alien_height = alien.rect.size
+        alien.x = alien_width + 2*alien_width*alien_number
+        alien.rect.x = alien.x
+        alien.rect.y = alien.rect.height+2*alien.rect.height*row_number
+        self.aliens.add(alien)
+    
+    def _update_aliens(self):
+        #обновляет позиции всех пришельцев
+        self._check_fleet_edges()
+        self.aliens.update()
+
+        #проверка столкновения корабля одного из кораблей пришельцев с нашим кораблем (коллизия)
+        if pygame.sprite.spritecollideany(self.ship,self.aliens):
+            print('Пришельцы победили')
+            sys.exit()
+
+    def _check_fleet_edges(self):
+        #реагирует на достижение пришельцем края
+        for alien in self.aliens.sprites():
+            if alien.check_edges():
+                self._check_fleet_direction()
+                break
+    
+    def _check_fleet_direction(self):
+        #опускает весь флот и меняет направление бокового движения 
+        for alien in self.aliens.sprites():
+            alien.rect.y += self.settings.fleet_drop_speed
+        self.settings.fleet_direction *= -1
 
     def _update_bullets(self):
         #обновляет позиции снаядов и унчтожает старые снаряды
@@ -109,6 +105,19 @@ class AlienInvasion:
         for bullet in self.bullets.copy():
             if bullet.rect.bottom <= 0:
                 self.bullets.remove(bullet)
+        self._check_bullet_alien_collision()
+        
+        
+        
+    def _check_bullet_alien_collision(self):
+        #проверка попадания в пришельца
+        #при попадании удаляем снаряд и пришельца
+        collision = pygame.sprite.groupcollide(self.bullets,self.aliens,True,True)
+        if not self.aliens:
+            #уничтожим все снаряды
+            self.bullets.empty()
+            #создаем новый флот
+            self._create_fleet()
 
     def _check_event(self):
         #отслеживание событий клавиатуры и мыши
@@ -126,12 +135,6 @@ class AlienInvasion:
                         sys.exit() 
                     elif event.key == pygame.K_SPACE:
                         self._fire_bullet()
-                    #elif event.key == pygame.K_DOWN:
-                        #переместить корабль наверх
-                        #self.ship.moving_up = True
-                    #elif event.key == pygame.K_UP:
-                        #переместить корабль вниз
-                        #self.ship.moving_under = True
                 elif event.type == pygame.KEYUP:
                     if event.key == pygame.K_RIGHT:
                         #конец перемещения корабля вправо
@@ -139,12 +142,7 @@ class AlienInvasion:
                     if event.key == pygame.K_LEFT:
                         #конец перемещения корабля вправо
                         self.ship.moving_left = False 
-                    #if event.key == pygame.K_DOWN:
-                        #конец перемещения корабля наверх
-                        #self.ship.moving_up = False
-                    #if event.key == pygame.K_UP:
-                        #конец перемещения корабля вниз
-                        #self.ship.moving_under = False
+                    
 
     def _fire_bullet(self):
         #создание нового снаряда и включение его в группу
@@ -160,7 +158,6 @@ class AlienInvasion:
             bullet.draw_bullet()
 
         self.aliens.draw(self.screen)
-        self.stars.draw(self.screen)
 
         #отображение последнего прорисованного экрана
         pygame.display.flip()
