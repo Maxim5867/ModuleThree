@@ -45,7 +45,7 @@ class AlienInvasion:
             self._update_bullets()
             self._update_screen()
     
-    #def _create_fleet(self):
+    #def _create_fleet(self1):
         #создание флота пришельцев
 
         #создание пришельца и вычисление количества пришельцев в ряду
