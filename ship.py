@@ -3,7 +3,7 @@ import pygame
 class Ship():
     #класс для управления кораблем
     def __init__(self,ai_game):
-        #инициализировать корабль и задать его первоначальную позицию
+        #инициализировать корабль и задать его первоначальную позицию7
         self.screen = ai_game.screen
         self.setting = ai_game.settings
         self.screen_rect = ai_game.screen.get_rect()
