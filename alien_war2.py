@@ -4,7 +4,7 @@ from setting2 import Setting
 from ship2 import Ship
 from bullet2 import Bullet
 from alien2 import Alien
-from bg2 import Background
+from star2 import Star
 import random
 
 class AlienInvasion:
@@ -26,7 +26,6 @@ class AlienInvasion:
         else:
             Vopr = input('''В каком режиме вы хотите играть:
             в полноэкранном(1) или в оконном(0)''')
-        
 
         pygame.display.set_caption('Инопланетное вторжение')
 
@@ -34,10 +33,9 @@ class AlienInvasion:
         self.bullets = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
         self.stars = pygame.sprite.Group()
-        
 
-        #self._create_fleet()
-        #self._create_stars()
+        self._create_fleet()
+        self._create_stars()
 
     def run_game(self):
         #запуск одного цикла игры
@@ -47,29 +45,37 @@ class AlienInvasion:
             self._update_bullets()
             self._update_screen()
     
-    #def _create_fleet(self):
+    def _create_fleet(self):
         #создание флота пришельцев
 
         #создание пришельца и вычисление количества пришельцев в ряду
         #интервал между соседними пришельцами равен ширине пришельца
-        #alien = Alien(self)
-        #alien_width,alien_height = alien.rect.size
-        #available_space_x = self.settings.screen_width - (2*alien_width)
-        #number_aliens_x = available_space_x // (2*alien_width)
+        alien = Alien(self)
+        alien_width,alien_height = alien.rect.size
+        available_space_x = self.settings.screen_width - (2*alien_width)
+        number_aliens_x = available_space_x // (2*alien_width)
 
         #определим количество рядов, которые помещаются на экране
-        #ship_height = self.ship.rect.height
-        #available_space_y = (self.settings.screen_height - (3*alien_height)-ship_height)
-        #number_rows = available_space_y // (2*alien_height)
+        ship_height = self.ship.rect.height
+        available_space_y = (self.settings.screen_height - (3*alien_height)-ship_height)
+        number_rows = available_space_y // (2*alien_height)
 
         #создание флота пришельцев
-        #for row_number in range(number_rows):
+        for row_number in range(number_rows):
             # создание ряда пришельцев
-            #for alien_number in range(number_aliens_x):
+            for alien_number in range(number_aliens_x):
                 #создаем пришельца и размещаем его в ряду
-                #elf._create_alien(alien_number,row_number)
+                self._create_alien(alien_number,row_number)
     
-    #def _create_stars(self):
+    def _create_alien(self,alien_number,row_number):
+        alien = Alien(self)
+        alien_width,alien_height = alien.rect.size
+        alien.x = alien_width + 2*alien_width*alien_number
+        alien.rect.x = alien.x
+        alien.rect.y = alien.rect.height+2*alien.rect.height*row_number
+        self.aliens.add(alien)
+    
+    def _create_stars(self):
         star = Star(self)
         star_width,star_height = star.rect.size
         avai_space_x = self.settings.screen_width - (4*star_width)
@@ -80,28 +86,20 @@ class AlienInvasion:
         number_row = avai_space_y // (6*star_height)
         for row_number in range(number_row):
             for alien_number in range(number_star_x):
-                #number_star_x = random.randint(0,100)
-                number_row = random.randint(-10,50)
                 self._create_star(alien_number,row_number)
         
         
     
-    #def _create_star(self,star_number,rows_number):
+    def _create_star(self,star_number,rows_number):
         star = Star(self)
         star_width,star_height = star.rect.size
-        star.x = star_width + 4*star_width*star_number
+        star.x = random.randint(0,1525)
         star.rect.x = star.x
-        star.rect.y = star.rect.height+6*star.rect.height*rows_number
+        star.rect.y = random.randint(0,1400)
         self.aliens.add(star)
             
 
-    #def _create_alien(self,alien_number,row_number):
-        #alien = Alien(self)
-        #alien_width,alien_height = alien.rect.size
-        #alien.x = alien_width + 2*alien_width*alien_number
-        #alien.rect.x = alien.x
-        #alien.rect.y = alien.rect.height+2*alien.rect.height*row_number
-        #self.aliens.add(alien)
+    
 
     def _update_bullets(self):
         #обновляет позиции снаядов и унчтожает старые снаряды
@@ -156,18 +154,13 @@ class AlienInvasion:
 
     def _update_screen(self):
         self.screen.fill(self.settings.bg_color)
-        background = pygame.image.load('images/phon.jpg')
-        self.screen.blit(background, (0,0))
         self.ship.blitme()
-        
 
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
-        
+
         self.aliens.draw(self.screen)
         self.stars.draw(self.screen)
-        
-        
 
         #отображение последнего прорисованного экрана
         pygame.display.flip()
