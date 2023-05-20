@@ -10,4 +10,3 @@ class Setting():
     bullet_height = 15
     bullet_speed = 1
     bullet_color = (250,250,20)
-    
