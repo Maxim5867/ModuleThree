@@ -40,4 +40,4 @@ class Ship():
 
     def blitme(self):
         #рисуем корабль в текущей позиции
-        self.screen.blit(self.image,self.rect) 
+        self.screen.blit(self.image,self.rect)
