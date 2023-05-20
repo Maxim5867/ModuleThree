@@ -9,7 +9,7 @@ class Ship():
         self.screen_rect = ai_game.screen.get_rect()
 
         #загрузить изображение корабля и получить прямоугольник
-        self.image = pygame.image.load('images/ship.bmp')
+        self.image = pygame.image.load('images/i.jpg')
         self.rect = self.image.get_rect()
         angle = -90#потом убрать
         #потом убрать 
@@ -19,26 +19,26 @@ class Ship():
 
         #заменить все x на y
         self.x = float(self.rect.x)
-        self.y = float(self.rect.y)
+        #self.y = float(self.rect.y)
         #флаги перемещения
-        self.moving_up = False
-        self.moving_down = False
+        self.moving_right = False
+        self.moving_left = False
         #self.moving_up = False
         #self.moving_under = False
 
     def update(self):
         #обновляет позицию корабля с учетом флага
-        if self.moving_up and self.rect.left < self.screen_rect.right:
-            self.y += self.setting.ship_speed
-        if self.moving_down and self.rect.bottom > 0:
-            self.y -= self.setting.ship_speed
+        if self.moving_right and self.rect.right < self.screen_rect.right:
+            self.x += self.setting.ship_speed
+        if self.moving_left and self.rect.left > 0:
+            self.x -= self.setting.ship_speed
         #if self.moving_up:
             #self.y += self.setting.ship_speed
         #if self.moving_under:
             #self.y -= self.setting.ship_speed
         
         self.rect.x = self.x
-        self.rect.y = self.y
+        #self.rect.y = self.y
 
 
     def blitme(self):
