@@ -3,13 +3,13 @@ import pygame
 class Ship():
     #класс для управления кораблем
     def __init__(self,ai_game):
-        #инициализировать корабль и задать его первоначальную позицию7
+        #инициализировать корабль и задать его первоначальную позицию
         self.screen = ai_game.screen
         self.setting = ai_game.settings
         self.screen_rect = ai_game.screen.get_rect()
 
         #загрузит изображение корабля и получить прямоугольник
-        self.image = pygame.image.load('images/ship.jpg')
+        self.image = pygame.image.load('images/ship.bmp')
         self.rect = self.image.get_rect()
         #каждый  новый корабль появляется у нижней границы экрана
         self.rect.midbottom = self.screen_rect.midbottom
@@ -36,7 +36,11 @@ class Ship():
         
         self.rect.x = self.x
         #self.rect.y = self.y
-
+    
+    def center_ship(self):
+        #размещает корабль в центре нижней части экрана
+        self.rect.midbottom = self.screen_rect.midbottom
+        self.x = float(self.rect.x)
 
     def blitme(self):
         #рисуем корабль в текущей позиции
