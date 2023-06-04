@@ -6,6 +6,7 @@ class Setting():
 
     def __init__(self):
         #инициализируем настройки игры
+        
 
         #параметры экрана
         self.screen_width = 800
@@ -15,10 +16,10 @@ class Setting():
         #настройки корабля
         #self.ship_speed = 1.5
         self.ship_limit = 3
-
+       
         #параметр снаряда
         #self.bullet_speed = 5
-        self.bullet_width = 3
+        self.bullet_width = 9999
         self.bullet_height = 15
         self.bullet_color = (60,60,60)
         self.bullets_allowed = 5
@@ -31,6 +32,7 @@ class Setting():
 
         #темп ускорения игры
         self.speedup_scale = 1.2
+        self.scoreup_scale = 2
 
         self.initialize_dynamic_settings()
     
@@ -39,16 +41,19 @@ class Setting():
         self.ship_speed_factor = 2.5
         self.bullet_speed_factor = 5.0
         self.alien_speed_factor = 1.0
+        self.score_image_factor = 50
 
         self.ship_speed = self.alien_speed_factor
         self.bullet_speed = self.bullet_speed_factor
         self.alien_speed = self.alien_speed_factor
+        
 
     def increase_speed(self):
-        #увеличиваем настрйоки скорости
+        #увеличиваем настройки скорости
         self.ship_speed_factor *= self.speedup_scale 
         self.bullet_speed_factor *= self.speedup_scale 
         self.alien_speed_factor *= self.speedup_scale
+        self.score_image_factor *= self.scoreup_scale
         
         self.ship_speed = self.alien_speed_factor
         self.bullet_speed = self.bullet_speed_factor
