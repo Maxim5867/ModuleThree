@@ -72,6 +72,8 @@ class AlienInvasion:
                         self.ship.moving_left = True  
                     elif event.key == pygame.K_q:
                         sys.exit() 
+                    if event.key == pygame.K_p:
+                        self.start_game()
                     elif event.key == pygame.K_SPACE:
                         self._fire_bullet()
                 elif event.type == pygame.KEYUP:
@@ -81,35 +83,55 @@ class AlienInvasion:
                     if event.key == pygame.K_LEFT:
                         #конец перемещения корабля вправо
                         self.ship.moving_left = False 
+                    
                 
-                elif event.type == pygame.MOUSEBUTTONDOWN:
-                    mouse_pos = pygame.mouse.get_pos()
-                    self._check_play_button(mouse_pos)
+                #elif event.type == pygame.MOUSEBUTTONDOWN:
+                    #mouse_pos = pygame.mouse.get_pos()
+                    #self._check_play_button(mouse_pos) 
 
-    def _check_play_button(self,mouse_pos):
+    #def _check_play_button(self,mouse_pos):
         #запускает новую игру при нажатии на кнопку Play
-        button_clicket = self.play_button.rect.collidepoint(mouse_pos)
-        if button_clicket and not self.stats.game_active:
+        #button_clicket = self.play_button.rect.collidepoint(mouse_pos)
+        #if button_clicket and not self.stats.game_active:
             #сброс игровых настроек
-            self.settings.initialize_dynamic_settings()
+            #self.settings.initialize_dynamic_settings()
             #сбрасываю статистику
-            self.stats.reset_stats()
+            #self.stats.reset_stats()
             #запускаем
-            self.stats.game_active = True
+            #self.stats.game_active = True
 
             #очистить списки пришельцев и снарядом
-            self.aliens.empty()
-            self.bullets.empty()
+            #self.aliens.empty()
+            #self.bullets.empty()
 
             #создаем новый флот и размещае корабль по центру
-            self._create_fleet()
-            self.ship.center_ship()
+            #self._create_fleet()
+            #self.ship.center_ship()
 
             #указатель мыши скрываем(делаем невидимым)
-            pygame.mouse.set_visible(False)
-        else:
-            self.stats.game_active = False
-            pygame.mouse.set_visible(True)
+            #pygame.mouse.set_visible(False)
+        #else:
+            #self.stats.game_active = False
+            #pygame.mouse.set_visible(True)
+
+    
+    def start_game(self):
+        self.settings.initialize_dynamic_settings()
+        #сбрасываю статистику
+        self.stats.reset_stats()
+        #запускаем
+        self.stats.game_active = True
+
+        #очистить списки пришельцев и снарядом
+        self.aliens.empty()
+        self.bullets.empty()
+
+        #создаем новый флот и размещае корабль по центру
+        self._create_fleet()
+        self.ship.center_ship()
+
+        #указатель мыши скрываем(делаем невидимым)
+        pygame.mouse.set_visible(False)
     
     def _update_screen(self):
         self.screen.fill(self.settings.bg_color)
