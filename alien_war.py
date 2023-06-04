@@ -72,7 +72,7 @@ class AlienInvasion:
                         self.ship.moving_left = True  
                     elif event.key == pygame.K_q:
                         sys.exit() 
-                    if event.key == pygame.K_p:
+                    elif event.key == pygame.K_p:
                         self.start_game()
                     elif event.key == pygame.K_SPACE:
                         self._fire_bullet()
@@ -116,22 +116,28 @@ class AlienInvasion:
 
     
     def start_game(self):
-        self.settings.initialize_dynamic_settings()
-        #сбрасываю статистику
-        self.stats.reset_stats()
-        #запускаем
-        self.stats.game_active = True
+        #button_clicket = self.play_button.rect.collidepoint()
+        if self.stats.game_active == False:
+            self.settings.initialize_dynamic_settings()
+            #сбрасываю статистику
+            self.stats.reset_stats()
+            #запускаем
+            self.stats.game_active = True
 
-        #очистить списки пришельцев и снарядом
-        self.aliens.empty()
-        self.bullets.empty()
+            #очистить списки пришельцев и снарядом
+            self.aliens.empty()
+            self.bullets.empty()
+            self.stats.score = 0
 
-        #создаем новый флот и размещае корабль по центру
-        self._create_fleet()
-        self.ship.center_ship()
+            #создаем новый флот и размещае корабль по центру
+            self._create_fleet()
+            self.ship.center_ship()
 
-        #указатель мыши скрываем(делаем невидимым)
-        pygame.mouse.set_visible(False)
+            #указатель мыши скрываем(делаем невидимым)
+            pygame.mouse.set_visible(False)
+        else:
+            self.stats.game_active = False
+            pygame.mouse.set_visible(True)
     
     def _update_screen(self):
         self.screen.fill(self.settings.bg_color)
@@ -160,7 +166,7 @@ class AlienInvasion:
             #уменьшаем количество наших кораблей на 1
             self.stats.ships_lifes -= 1
             
-            #очищаем грнуппы пришельцев и снарядов
+            #очищаем группы пришельцев и снарядов
             self.bullets.empty()
             self.aliens.empty()
 
@@ -254,9 +260,10 @@ class AlienInvasion:
         self._check_bullet_alien_collision()
     
     def _check_bullet_alien_collision(self):
-        #проверка попадания в пришельца
-        #при попадании удаляем снаряд и пришельца
         collision = pygame.sprite.groupcollide(self.bullets,self.aliens,True,True)
+        if collision:
+            self.stats.score += self.settings.score_image_factor
+            self.sb.prep_score()
         if not self.aliens:
             #уничтожим все снаряды
             self.bullets.empty()
