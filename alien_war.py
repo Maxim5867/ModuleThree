@@ -8,6 +8,7 @@ from ship import Ship
 from bullet import Bullet
 from alien import Alien
 from button import Button
+import pickle
 
 
 class AlienInvasion:
@@ -37,6 +38,7 @@ class AlienInvasion:
         #и панели результатов
         self.stats = GameStats(self)
         self.sb = Scoreboard(self)
+        self.stats.score = 0
 
         self.ship = Ship(self)
         self.bullets = pygame.sprite.Group()
@@ -45,6 +47,35 @@ class AlienInvasion:
         self._create_fleet()
         #создание кнопки Play
         self.play_button = Button(self, "Play")
+
+    def save_game(self,filename):
+        with open(filename, "wb") as f:
+            pickle.dump(self,f)
+        
+    def load_game(self,filename):
+        with open(filename, "rb") as f:
+            return pickle.load(f)
+            
+        game = AlienInvasion()
+        game.save_game("savegame.pickle")
+
+        loaded_game = AlienInvasion.load_game("savegame.pickle")
+        print(loaded_game.score)
+          
+    #def high_score_write(self):
+        #db = shelve.open(r'F:\TestPython\SHELVE\db')
+        #scores = {'a': [1, 21.2], 'b': (2, 44.5)}
+        #db['hi_scores'] = scores
+        #db.close()
+    #def high_score_read(self):
+        #db = shelve.open(r'F:\TestPython\SHELVE\db')
+        #d = db['hi_scores']
+        #db.close()
+    
+    def check_high_score(self):
+        if self.stats.score > self.stats.high_score:
+            self.stats.high_score = self.stats.score
+            self.sb.high_score()
 
     def run_game(self):
         #запуск одного цикла игры
@@ -74,6 +105,12 @@ class AlienInvasion:
                         sys.exit() 
                     elif event.key == pygame.K_p:
                         self.start_game()
+                    elif event.key == pygame.K_n:
+                        self.reset_game()
+                    elif event.key == pygame.K_l:
+                        self.load_game()
+                    elif event.key == pygame.K_s:
+                        self.save_game()
                     elif event.key == pygame.K_SPACE:
                         self._fire_bullet()
                 elif event.type == pygame.KEYUP:
@@ -113,7 +150,24 @@ class AlienInvasion:
         #else:
             #self.stats.game_active = False
             #pygame.mouse.set_visible(True)
+    def reset_game(self):
+        self.settings.initialize_dynamic_settings()
+        #сбрасываю статистику
+        self.stats.reset_stats()
+        #запускаем
+        self.stats.game_active = True
 
+        #очистить списки пришельцев и снарядом
+        self.aliens.empty()
+        self.bullets.empty()
+        self.stats.score = 0
+
+        #создаем новый флот и размещае корабль по центру
+        self._create_fleet()
+        self.ship.center_ship()
+
+        #указатель мыши скрываем(делаем невидимым)
+        pygame.mouse.set_visible(False)
     
     def start_game(self):
         #button_clicket = self.play_button.rect.collidepoint()
@@ -264,20 +318,23 @@ class AlienInvasion:
         if collision:
             self.stats.score += self.settings.score_image_factor
             self.sb.prep_score()
+            for aliens in collision.values():
+                self.stats.score == self.settings.score_image_factor + len(aliens)
+                self.sb.prep_score()
+                self.check_high_score()
+                
         if not self.aliens:
             #уничтожим все снаряды
             self.bullets.empty()
             #создаем новый флот
             self._create_fleet()
             self.settings.increase_speed()
-
+            
     def _fire_bullet(self):
         #создание нового снаряда и включение его в группу
         if len(self.bullets) < self.settings.bullets_allowed:
             new_bullet = Bullet(self)
             self.bullets.add(new_bullet)
-
-    
 
 if __name__ == '__main__':
     #создаем экземпляр и запускаем игру
