@@ -18,6 +18,7 @@ class Scoreboard():
 
         #подготовим исходное изображение
         self.prep_score()
+        self.high_score()
 
     def prep_score(self):
         #преобразуем текущий счет в графическое изображение
@@ -28,9 +29,18 @@ class Scoreboard():
         self.score_rect = self.score_image.get_rect()
         self.score_rect.right = self.screen_rect.right - 20
         self.score_rect.top = 20
-        
-        
+    
+    def high_score(self):
+        #преобразуем текущий счет в графическое изображение
+        high_score_str = str(self.stats.high_score)
+        self.high_score_image = self.font.render(high_score_str, True, self.text_color, self.settings.bg_color)
+
+        #вывод рекорда в левой верхней части экрана
+        self.high_score_rect = self.high_score_image.get_rect()
+        self.high_score_rect.left = self.screen_rect.left + 20
+        self.high_score_rect.top = 20
     
     def show_score(self):
         #вывод счета на экран
         self.screen.blit(self.score_image, self.score_rect)
+        self.screen.blit(self.high_score_image, self.high_score_rect)
