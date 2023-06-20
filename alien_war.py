@@ -48,29 +48,20 @@ class AlienInvasion:
         #создание кнопки Play
         self.play_button = Button(self, "Play")
 
-    def save_game(self,filename):
-        with open(filename, "wb") as f:
-            pickle.dump(self,f)
-        
-    def load_game(self,filename):
-        with open(filename, "rb") as f:
-            return pickle.load(f)
-            
-        game = AlienInvasion()
-        game.save_game("savegame.pickle")
+    def load_game(self):
+        with open("game.txt", "rb") as load_file:
+            self.settings = pickle.load(load_file)
 
-        loaded_game = AlienInvasion.load_game("savegame.pickle")
-        print(loaded_game.score)
-          
-    #def high_score_write(self):
-        #db = shelve.open(r'F:\TestPython\SHELVE\db')
-        #scores = {'a': [1, 21.2], 'b': (2, 44.5)}
-        #db['hi_scores'] = scores
-        #db.close()
-    #def high_score_read(self):
-        #db = shelve.open(r'F:\TestPython\SHELVE\db')
-        #d = db['hi_scores']
-        #db.close()
+    def save_game(self):
+        with open("game.txt", "wb") as save_file:
+            pickle.dump(self.settings, save_file)
+        
+        game = AlienInvasion()
+        game.save_game("game.txt")
+
+        loaded_game = AlienInvasion.load_game("game.txt")
+        print(loaded_game.score)  
+        print(loaded_game.level)        
     
     def check_high_score(self):
         if self.stats.score > self.stats.high_score:
@@ -102,6 +93,8 @@ class AlienInvasion:
                         #переместить корабль влево
                         self.ship.moving_left = True  
                     elif event.key == pygame.K_q:
+                        file_rec = open("record.txt", "w")
+                        file_rec.write(str(self.stats.high_score))
                         sys.exit() 
                     elif event.key == pygame.K_p:
                         self.start_game()
@@ -161,6 +154,7 @@ class AlienInvasion:
         self.aliens.empty()
         self.bullets.empty()
         self.stats.score = 0
+        self.settings.level = 1
 
         #создаем новый флот и размещае корабль по центру
         self._create_fleet()
@@ -182,6 +176,7 @@ class AlienInvasion:
             self.aliens.empty()
             self.bullets.empty()
             self.stats.score = 0
+            self.settings.level = 1
 
             #создаем новый флот и размещае корабль по центру
             self._create_fleet()
@@ -220,9 +215,11 @@ class AlienInvasion:
             #уменьшаем количество наших кораблей на 1
             self.stats.ships_lifes -= 1
             
+            
             #очищаем группы пришельцев и снарядов
             self.bullets.empty()
             self.aliens.empty()
+            self.prep_ship()
 
             #создадим новый флот пришельцев и вернем наш корабль на начальное положение
             self._create_fleet()
@@ -329,6 +326,9 @@ class AlienInvasion:
             #создаем новый флот
             self._create_fleet()
             self.settings.increase_speed()
+            self.settings.level == self.settings.level_factor
+            self.sb.prep_level()
+            
             
     def _fire_bullet(self):
         #создание нового снаряда и включение его в группу
