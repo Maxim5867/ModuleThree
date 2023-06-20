@@ -1,4 +1,5 @@
 import sys
+from time import sleep
 import pygame
 from setting3 import Setting
 from ship3 import Ship
@@ -50,12 +51,12 @@ class AlienInvasion:
         #интервал между соседними пришельцами равен ширине пришельца
         alien = Alien(self)
         alien_width,alien_height = alien.rect.size
-        available_space_x = self.settings.screen_width - (2*alien_width)
+        available_space_x = self.settings.screen_width - (alien_width)
         number_aliens_x = available_space_x // (2*alien_width)
 
         #определим количество рядов, которые помещаются на экране
-        ship_height = self.ship.rect.height
-        available_space_y = (self.settings.screen_height - (3*alien_height)-ship_height)
+        #ship_height = self.ship.rect.height
+        available_space_y = (self.settings.screen_height - (5*alien_height))
         number_rows = available_space_y // (2*alien_height)
 
         #создание флота пришельцев
@@ -71,16 +72,17 @@ class AlienInvasion:
         alien_width,alien_height = alien.rect.size
         alien.x = alien_width + 2*alien_width*alien_number
         alien.rect.x = alien.x
-        alien.rect.y = alien.rect.height+2*alien.rect.height*row_number
+        alien.rect.y = alien.rect.height+alien.rect.height
         self.aliens.add(alien)
     
     def _update_aliens(self):
         #обновляет позиции всех пришельцев
+        screen_rect = self.screen.get_rect()
         self._check_fleet_edges()
         self.aliens.update()
         for alien in self.aliens.copy():
-            if alien.rect.bottom <= 0:
-                #self.aliens.empty()
+            if alien.rect.bottom > screen_rect.bottom:
+                self.aliens.empty()
                 self._create_fleet()
 
         #проверка столкновения корабля одного из кораблей пришельцев с нашим кораблем (коллизия)
@@ -88,11 +90,44 @@ class AlienInvasion:
             #print('Пришельцы победили')
             #sys.exit()
 
+    def _ship_hit(self):
+        #обрабатывает столкновение кораблей с пришельцем
+        
+        if self.stats.ships_lifes > 0:
+            #уменьшаем количество наших кораблей на 1
+            self.stats.ships_lifes -= 1
+            
+            
+            #очищаем группы пришельцев и снарядов
+            self.bullets.empty()
+            self.aliens.empty()
+            #self.prep_ship()
+
+            #создадим новый флот пришельцев и вернем наш корабль на начальное положение
+            self._create_fleet()
+            self.ship.center_ship()
+
+            #пауза
+            sleep(0.5)
+        else:
+            self.stats.game_active = False
+
+
     def _check_fleet_edges(self):
         #реагирует на достижение пришельцем края
         for alien in self.aliens.sprites():
             if alien.check_edges():
                 self._check_fleet_direction()
+                break
+    
+    def _check_aliens_bottom(self):
+        #проверяет не добрался ли пришелец до нижнего края экран
+        screen_rect = self.screen.get_rect()
+        #ЗДЕСЬ ДЗ ПРО КАПЛИ ДОЖДЯ!
+        for alien in self.aliens.sprites():
+            if alien.rect.bottom >= screen_rect.bottom:
+                #то же самое, что и столкновение пришельца с кораблем
+                self._ship_hit()
                 break
     
     def _check_fleet_direction(self):
@@ -154,7 +189,7 @@ class AlienInvasion:
 
     def _update_screen(self):
         self.screen.fill(self.settings.bg_color)
-        self.ship.blitme()
+        #self.ship.blitme()
 
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
