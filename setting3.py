@@ -8,7 +8,7 @@ class Setting():
     #параметры экрана
     screen_width = 800
     screen_height = 600
-    bg_color = (250,250,250)
+    bg_color = (230,230,230)
 
     #настройки корабля
     ship_speed = 1.5
@@ -21,7 +21,7 @@ class Setting():
     bullets_allowed = 5
 
     #настройки пришельцев
-    alien_speed = 0.5
+    alien_speed = 2
     fleet_drop_speed = 10
     #fleet_direction = 1 - движение вправо, = -1 - движение влево
     fleet_direction = 1
