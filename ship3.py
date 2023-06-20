@@ -9,13 +9,13 @@ class Ship():
         self.screen_rect = ai_game.screen.get_rect()
 
         #загрузит изображение корабля и получить прямоугольник
-        self.image = pygame.image.load('images/ship.jpg')
-        self.rect = self.image.get_rect()
+        #self.image = pygame.image.load('images/ship.bmp')
+        #self.rect = self.image.get_rect()
         #каждый  новый корабль появляется у нижней границы экрана
-        self.rect.midbottom = self.screen_rect.midbottom
+        #self.rect.midbottom = self.screen_rect.midbottom
 
 
-        self.x = float(self.rect.x)
+        #self.x = float(self.rect.x)
         #self.y = float(self.rect.y)
         #флаги перемещения
         self.moving_right = False
@@ -34,10 +34,10 @@ class Ship():
         #if self.moving_under:
             #self.y -= self.setting.ship_speed
         
-        self.rect.x = self.x
+        #self.rect.x = self.x
         #self.rect.y = self.y
 
 
-    def blitme(self):
+    #def blitme(self):
         #рисуем корабль в текущей позиции
-        self.screen.blit(self.image,self.rect)
+        #self.screen.blit(self.image,self.rect)
